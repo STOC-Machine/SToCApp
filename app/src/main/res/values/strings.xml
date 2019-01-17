@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">StoCApp</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title_activity_pi_feed1">PiFeed1</string>
+    <string name="feed_1_button">Open Feed 1</string>
+    <string name="feed_2_button">Open Feed 2</string>
+    <string name="feed_3_button">Open Feed 3</string>
+    <string name="feed_4_button">Open Feed 4</string>
+    <string name="title_activity_settings">Settings</string>
+
+
+    <string name="setting_feed_1">Feed 1 IP</string>
+    <string name="setting_feed_2">Feed 2 IP</string>
+    <string name="setting_feed_3">Feed 3 IP</string>
+    <string name="setting_feed_4">Feed 4 IP</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>
