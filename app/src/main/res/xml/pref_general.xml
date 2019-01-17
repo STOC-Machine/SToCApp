@@ -26,4 +26,11 @@
             android:selectAllOnFocus="true"
             android:inputType="number|text"
     />
+    <ListPreference
+        android:key="feed_refresh"
+        android:title="@string/feed_refresh_rate"
+        android:entries="@array/feed_refresh_options"
+        android:entryValues="@array/feed_refresh_options"
+        android:defaultValue="25000"
+    />
 </PreferenceScreen>

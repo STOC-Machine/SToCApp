@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="feed_refresh_options">
+        <item>250</item>
+        <item>2500</item>
+        <item>25000</item>
+        <item>250000</item>
+    </string-array>
+</resources>
