@@ -11,5 +11,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/videoFeedView"/>
+    <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/feed_error"/>
+    <TextView
+            android:layout_width="48dp"
+            android:layout_height="48dp" android:id="@+id/feed_id" android:textSize="34sp"
+            android:textAlignment="center" android:textColor="@android:color/white" android:textStyle="bold"/>
 
 </FrameLayout>

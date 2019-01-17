@@ -1,12 +1,17 @@
 package com.example.maxnarvaez.stocapp
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.support.v4.view.GestureDetectorCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_pi_feed.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,6 +26,27 @@ class PiFeed : AppCompatActivity() {
     )
 
     private lateinit var mDetector: GestureDetectorCompat
+
+    private val mjpegViewHandler: Handler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            Log.d("MJPEG Viewer : ", msg.obj.toString())
+
+            when (msg.obj.toString()) {
+                "DISCONNECTED" -> {// TODO : When video stream disconnected
+                }
+                "CONNECTION_PROGRESS" -> {// TODO : When connection progress
+                }
+                "CONNECTED" -> {// TODO : When video streaming connected
+                    findViewById<ProgressBar>(R.id.feed_error).visibility = View.INVISIBLE
+                }
+                "CONNECTION_ERROR" -> {// TODO : When connection error
+                    findViewById<View>(R.id.feed_error).visibility = View.VISIBLE
+                }
+                "STOPPING_PROGRESS" -> {// TODO : When MjpegViewer is in stopping progress
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +81,7 @@ class PiFeed : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        Log.d("PI Feed", "Paused")
         GlobalScope.launch { videoFeedView.Stop() }
     }
 
@@ -76,7 +103,8 @@ class PiFeed : AppCompatActivity() {
 
     private fun startFeed() {
         Log.d("New Feed", "$feedChoice")
-        videoFeedView.Start(feeds[feedChoice])
+        videoFeedView.Start(feeds[feedChoice], mjpegViewHandler)
+        findViewById<TextView>(R.id.feed_id).text = feedChoice.toString()
     }
 
     private fun swapFeed() {
@@ -111,4 +139,6 @@ class PiFeed : AppCompatActivity() {
             return true
         }
     }
+
+
 }
