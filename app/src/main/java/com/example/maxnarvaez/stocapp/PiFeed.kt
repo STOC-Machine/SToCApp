@@ -1,5 +1,6 @@
 package com.example.maxnarvaez.stocapp
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -32,17 +33,22 @@ class PiFeed : AppCompatActivity() {
             Log.d("MJPEG Viewer : ", msg.obj.toString())
 
             when (msg.obj.toString()) {
-                "DISCONNECTED" -> {// TODO : When video stream disconnected
-                }
-                "CONNECTION_PROGRESS" -> {// TODO : When connection progress
-                }
-                "CONNECTED" -> {// TODO : When video streaming connected
-                    findViewById<ProgressBar>(R.id.feed_error).visibility = View.INVISIBLE
-                }
-                "CONNECTION_ERROR" -> {// TODO : When connection error
+                "DISCONNECTED" -> {// When video stream disconnected
                     findViewById<View>(R.id.feed_error).visibility = View.VISIBLE
                 }
-                "STOPPING_PROGRESS" -> {// TODO : When MjpegViewer is in stopping progress
+                "CONNECTION_PROGRESS" -> {// When connection progress
+                    findViewById<View>(R.id.feed_error).visibility = View.VISIBLE
+                }
+                "CONNECTED" -> {// When video streaming connected
+                    findViewById<ProgressBar>(R.id.feed_error).visibility = View.INVISIBLE
+                    findViewById<TextView>(R.id.feed_id).setBackgroundColor(Color.TRANSPARENT)
+                }
+                "CONNECTION_ERROR" -> {// When connection error
+                    findViewById<View>(R.id.feed_error).visibility = View.INVISIBLE
+                    findViewById<TextView>(R.id.feed_id).setBackgroundColor(Color.RED)
+                }
+                "STOPPING_PROGRESS" -> {// When MjpegViewer is in stopping progress
+                    findViewById<View>(R.id.feed_error).visibility = View.VISIBLE
                 }
             }
         }
