@@ -16,9 +16,9 @@ import android.widget.TextView
 
 
 class SpeechFragment : Fragment(), RecognitionListener {
-    var sr: SpeechRecognizer? = null
-    var speechText: TextView? = null
-    var speechButton: Button? = null
+    private var sr: SpeechRecognizer? = null
+    lateinit var speechText: TextView
+    lateinit var speechButton: Button
     var result: ArrayList<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,11 +37,11 @@ class SpeechFragment : Fragment(), RecognitionListener {
         val thisView = inflater.inflate(R.layout.fragment_speech, container, false)
         speechText = thisView.findViewById<View>(R.id.speechText) as TextView
         speechButton = thisView.findViewById<View>(R.id.speechButton) as Button
-        speechButton!!.setOnClickListener{view ->
+        speechButton.setOnClickListener{
             startListening()
         }
 
-        speechButton!!.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY))
+        speechButton.backgroundTintList = ColorStateList.valueOf(Color.GRAY)
 
         // Inflate the layout for this fragment
         return thisView
@@ -50,13 +50,12 @@ class SpeechFragment : Fragment(), RecognitionListener {
 
     //App is ready for the user to speak
     override fun onReadyForSpeech(params: Bundle) {
-        speechButton!!.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN))
+        speechButton.backgroundTintList = ColorStateList.valueOf(Color.GREEN)
     }
 
     //user has begun to speak
     override fun onBeginningOfSpeech() {
-        speechButton!!.setBackgroundColor(Color.CYAN)
-        speechButton!!.setBackgroundTintList(ColorStateList.valueOf(Color.CYAN))
+        speechButton.backgroundTintList = ColorStateList.valueOf(Color.CYAN)
     }
 
     //change in volume (I believe, haven't read much on this)
@@ -64,38 +63,36 @@ class SpeechFragment : Fragment(), RecognitionListener {
         //don't bother
     }
 
-    //buffer recieved (was never triggered in all my testing)
+    //buffer received (was never triggered in all my testing)
     override fun onBufferReceived(buffer: ByteArray) {
         //don't bother
     }
 
     //it's been a while since they talked, they're done
     override fun onEndOfSpeech() {
-        speechButton!!.setBackgroundColor(Color.GRAY)
-        speechButton!!.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY))
+        speechButton.backgroundTintList = ColorStateList.valueOf(Color.GRAY)
 
     }
 
     //something went wrong
     override fun onError(error: Int) {
-        var errorString: String = ""
-        when (error) {
-            SpeechRecognizer.ERROR_AUDIO -> errorString = "ERROR_AUDIO"
-            SpeechRecognizer.ERROR_CLIENT -> errorString = "ERROR_CLIENT"
-            SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> errorString = "ERROR+INSUFFICIENT_PERMISSIONS"
-            SpeechRecognizer.ERROR_NETWORK -> errorString = "ERROR_NETWORK"
-            SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> errorString = "ERROR_NETWORK_TIMEOUT"
-            SpeechRecognizer.ERROR_NO_MATCH -> errorString = "ERROR_NO_MATCH"
-            SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> errorString = "ERROR_RECOGNIZER_BUSY"
-            SpeechRecognizer.ERROR_SERVER -> errorString = "ERROR_SERVR"
-            SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> errorString = "ERROR_SPEECH_TIMEOUT"
+        val errorString: String = when (error) {
+            SpeechRecognizer.ERROR_AUDIO -> "ERROR_AUDIO"
+            SpeechRecognizer.ERROR_CLIENT -> "ERROR_CLIENT"
+            SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "ERROR+INSUFFICIENT_PERMISSIONS"
+            SpeechRecognizer.ERROR_NETWORK -> "ERROR_NETWORK"
+            SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "ERROR_NETWORK_TIMEOUT"
+            SpeechRecognizer.ERROR_NO_MATCH -> "ERROR_NO_MATCH"
+            SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "ERROR_RECOGNIZER_BUSY"
+            SpeechRecognizer.ERROR_SERVER -> "ERROR_SERVR"
+            SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "ERROR_SPEECH_TIMEOUT"
             else -> {
-                errorString = "ERROR_IF_YOU_SEE_THIS_SOMETHING_HAS_GONE_HORRIBLY_WRONG"
+                "ERROR_IF_YOU_SEE_THIS_SOMETHING_HAS_GONE_HORRIBLY_WRONG"
             }
         }
 
         println("ERROR $error")
-        speechText!!.text = errorString
+        speechText.text = errorString
         //sr!!.stopListening()
         //not sure if this is how you're supposed to do it, but it works!
         onBeginningOfSpeech()
@@ -104,15 +101,15 @@ class SpeechFragment : Fragment(), RecognitionListener {
 
     //speech has been processed, here are the results
     override fun onResults(results: Bundle) {
-        var result: java.util.ArrayList<String> =
+        val result: java.util.ArrayList<String> =
             results.get(/*sr.RESULTS_RECOGNITION*/SpeechRecognizer.RESULTS_RECOGNITION) as java.util.ArrayList<String>
-        speechText!!.text = result[0]//Main one, the one it's most confident about...
+        speechText.text = result[0]//Main one, the one it's most confident about...
         println("Possible results: $result")
     }
 
     //partial results? I never ran into these but maybe if it was interrupted?
     override fun onPartialResults(partialResults: Bundle) {
-        var result: java.util.ArrayList<String> =
+        val result: java.util.ArrayList<String> =
             partialResults.get(/*sr.RESULTS_RECOGNITION*/SpeechRecognizer.RESULTS_RECOGNITION) as java.util.ArrayList<String> //copy pasted from above
         println("partial results: $result")
     }
@@ -123,9 +120,8 @@ class SpeechFragment : Fragment(), RecognitionListener {
     }
 
     //TODO: make a button that calls this when pressed (and changes colors...)
-    fun startListening() {
-        speechButton!!.setBackgroundTintList(ColorStateList.valueOf(Color.RED))
-        //speechButton!!.setBackgroundColor(Color.RED)
+    private fun startListening() {
+        speechButton.backgroundTintList = ColorStateList.valueOf(Color.RED)
         val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         sr!!.startListening(speechIntent)

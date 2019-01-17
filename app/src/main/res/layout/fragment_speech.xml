@@ -12,7 +12,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/speechButton"
-            android:backgroundTint="@android:color/darker_gray"
             android:layout_marginBottom="25dp" app:layout_constraintBottom_toBottomOf="@+id/speechText"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
     />
