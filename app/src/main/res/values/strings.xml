@@ -17,5 +17,6 @@
 
     <string name="speech_button">Button</string>
     <string name="speech_text">Go on, click the button.</string>
+    <string name="feed_refresh_rate">Feed Refresh Rate</string>
 
 </resources>

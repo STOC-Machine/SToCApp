@@ -33,6 +33,7 @@ class Startup : AppCompatActivity() {
         feed2IP = mPreferences.getString(FEED_IP_2_KEY, feed2IP) ?: feed2IP
         feed3IP = mPreferences.getString(FEED_IP_3_KEY, feed3IP) ?: feed3IP
         feed4IP = mPreferences.getString(FEED_IP_4_KEY, feed4IP) ?: feed4IP
+        feedRefreshRate = mPreferences.getInt(FEED_REFRESH_KEY, feedRefreshRate)
 
 
         if (ContextCompat.checkSelfPermission(
@@ -67,6 +68,7 @@ class Startup : AppCompatActivity() {
         preferencesEditor.putString(FEED_IP_2_KEY, feed2IP)
         preferencesEditor.putString(FEED_IP_3_KEY, feed3IP)
         preferencesEditor.putString(FEED_IP_4_KEY, feed4IP)
+        preferencesEditor.putInt(FEED_REFRESH_KEY, feedRefreshRate)
         preferencesEditor.apply()
     }
 

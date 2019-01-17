@@ -14,10 +14,10 @@ import kotlinx.coroutines.launch
 
 class PiFeed : AppCompatActivity() {
     private val feeds = mapOf(
-        1 to "http://$feed1IP/html/cam_pic_new.php?pDelay=25000",
-        2 to "http://$feed2IP/html/cam_pic_new.php?pDelay=25000",
-        3 to "http://$feed3IP/html/cam_pic_new.php?pDelay=25000",
-        4 to "http://$feed4IP/html/cam_pic_new.php?pDelay=25000"
+        1 to "http://$feed1IP/html/cam_pic_new.php?pDelay=$feedRefreshRate",
+        2 to "http://$feed2IP/html/cam_pic_new.php?pDelay=$feedRefreshRate",
+        3 to "http://$feed3IP/html/cam_pic_new.php?pDelay=$feedRefreshRate",
+        4 to "http://$feed4IP/html/cam_pic_new.php?pDelay=$feedRefreshRate"
     )
 
     private lateinit var mDetector: GestureDetectorCompat
