@@ -19,7 +19,6 @@ class SpeechFragment : Fragment(), RecognitionListener {
     private var sr: SpeechRecognizer? = null
     lateinit var speechText: TextView
     lateinit var speechButton: Button
-    var result: ArrayList<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,11 +36,12 @@ class SpeechFragment : Fragment(), RecognitionListener {
         val thisView = inflater.inflate(R.layout.fragment_speech, container, false)
         speechText = thisView.findViewById<View>(R.id.speechText) as TextView
         speechButton = thisView.findViewById<View>(R.id.speechButton) as Button
-        speechButton.setOnClickListener{
+        speechButton.setOnClickListener {
             startListening()
         }
 
         speechButton.backgroundTintList = ColorStateList.valueOf(Color.GRAY)
+        speechText.setBackgroundColor(0xfffafafa.toInt())
 
         // Inflate the layout for this fragment
         return thisView
@@ -84,7 +84,7 @@ class SpeechFragment : Fragment(), RecognitionListener {
             SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "ERROR_NETWORK_TIMEOUT"
             SpeechRecognizer.ERROR_NO_MATCH -> "ERROR_NO_MATCH"
             SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "ERROR_RECOGNIZER_BUSY"
-            SpeechRecognizer.ERROR_SERVER -> "ERROR_SERVR"
+            SpeechRecognizer.ERROR_SERVER -> "ERROR_SERVER"
             SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "ERROR_SPEECH_TIMEOUT"
             else -> {
                 "ERROR_IF_YOU_SEE_THIS_SOMETHING_HAS_GONE_HORRIBLY_WRONG"
@@ -101,16 +101,22 @@ class SpeechFragment : Fragment(), RecognitionListener {
 
     //speech has been processed, here are the results
     override fun onResults(results: Bundle) {
-        val result: java.util.ArrayList<String> =
-            results.get(/*sr.RESULTS_RECOGNITION*/SpeechRecognizer.RESULTS_RECOGNITION) as java.util.ArrayList<String>
+        val result = mutableListOf<String>().apply {
+            (results.get(SpeechRecognizer.RESULTS_RECOGNITION) as List<*>).forEach {
+                this.add(it as String)
+            }
+        }
         speechText.text = result[0]//Main one, the one it's most confident about...
         println("Possible results: $result")
     }
 
     //partial results? I never ran into these but maybe if it was interrupted?
     override fun onPartialResults(partialResults: Bundle) {
-        val result: java.util.ArrayList<String> =
-            partialResults.get(/*sr.RESULTS_RECOGNITION*/SpeechRecognizer.RESULTS_RECOGNITION) as java.util.ArrayList<String> //copy pasted from above
+        val result = mutableListOf<String>().apply {
+            (partialResults.get(SpeechRecognizer.RESULTS_RECOGNITION) as List<*>).forEach {
+                this.add(it as String)
+            }
+        } //copy pasted from above
         println("partial results: $result")
     }
 

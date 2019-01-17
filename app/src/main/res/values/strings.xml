@@ -15,7 +15,7 @@
     <string name="setting_feed_3">Feed 3 IP</string>
     <string name="setting_feed_4">Feed 4 IP</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="speech_button">Button</string>
+    <string name="speech_text">Go on, click the button.</string>
 
 </resources>

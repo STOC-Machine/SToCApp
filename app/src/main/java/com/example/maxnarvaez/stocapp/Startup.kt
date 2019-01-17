@@ -5,30 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
-import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
-import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
-import android.widget.TextView
 
 import kotlinx.android.synthetic.main.activity_startup.*
-import kotlinx.android.synthetic.main.content_startup.*
 
 class Startup : AppCompatActivity() {
 
-
-
     private val sharedPrefFile = "stocAppPrefs"
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,11 +35,6 @@ class Startup : AppCompatActivity() {
         feed4IP = mPreferences.getString(FEED_IP_4_KEY, feed4IP) ?: feed4IP
 
 
-//        fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null).show()
-//        }
-
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.RECORD_AUDIO
@@ -64,15 +46,11 @@ class Startup : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_startup, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> {
                 openSettings()
@@ -92,20 +70,9 @@ class Startup : AppCompatActivity() {
         preferencesEditor.apply()
     }
 
-    private fun openFeed(feed: Int) {
-        feedChoice = feed
-        val intent = Intent(this, PiFeed::class.java)
-        startActivity(intent)
-    }
-
     private fun openSettings() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
-
-    fun openFeed1(view: View) = openFeed(1)
-    fun openFeed2(view: View) = openFeed(2)
-    fun openFeed3(view: View) = openFeed(3)
-    fun openFeed4(view: View) = openFeed(4)
 
 }
