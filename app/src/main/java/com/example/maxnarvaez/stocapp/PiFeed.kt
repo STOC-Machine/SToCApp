@@ -34,21 +34,21 @@ class PiFeed : AppCompatActivity() {
 
             when (msg.obj.toString()) {
                 "DISCONNECTED" -> {// When video stream disconnected
-                    findViewById<View>(R.id.feed_error).visibility = View.VISIBLE
+                    findViewById<View>(R.id.feed_loading).visibility = View.VISIBLE
                 }
                 "CONNECTION_PROGRESS" -> {// When connection progress
-                    findViewById<View>(R.id.feed_error).visibility = View.VISIBLE
+                    findViewById<View>(R.id.feed_loading).visibility = View.VISIBLE
                 }
                 "CONNECTED" -> {// When video streaming connected
-                    findViewById<ProgressBar>(R.id.feed_error).visibility = View.INVISIBLE
+                    findViewById<ProgressBar>(R.id.feed_loading).visibility = View.INVISIBLE
                     findViewById<TextView>(R.id.feed_id).setBackgroundColor(Color.TRANSPARENT)
                 }
                 "CONNECTION_ERROR" -> {// When connection error
-                    findViewById<View>(R.id.feed_error).visibility = View.INVISIBLE
+                    findViewById<View>(R.id.feed_loading).visibility = View.INVISIBLE
                     findViewById<TextView>(R.id.feed_id).setBackgroundColor(Color.RED)
                 }
                 "STOPPING_PROGRESS" -> {// When MjpegViewer is in stopping progress
-                    findViewById<View>(R.id.feed_error).visibility = View.VISIBLE
+                    findViewById<View>(R.id.feed_loading).visibility = View.VISIBLE
                 }
             }
         }
