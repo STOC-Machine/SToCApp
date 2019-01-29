@@ -63,13 +63,13 @@ class Startup : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        val preferencesEditor: SharedPreferences.Editor = mPreferences.edit()
-        preferencesEditor.putString(FEED_IP_1_KEY, feed1IP)
-        preferencesEditor.putString(FEED_IP_2_KEY, feed2IP)
-        preferencesEditor.putString(FEED_IP_3_KEY, feed3IP)
-        preferencesEditor.putString(FEED_IP_4_KEY, feed4IP)
-        preferencesEditor.putInt(FEED_REFRESH_KEY, feedRefreshRate)
-        preferencesEditor.apply()
+        mPreferences.edit()
+            .putString(FEED_IP_1_KEY, feed1IP)
+            .putString(FEED_IP_2_KEY, feed2IP)
+            .putString(FEED_IP_3_KEY, feed3IP)
+            .putString(FEED_IP_4_KEY, feed4IP)
+            .putInt(FEED_REFRESH_KEY, feedRefreshRate)
+            .apply()
     }
 
     private fun openSettings() {
