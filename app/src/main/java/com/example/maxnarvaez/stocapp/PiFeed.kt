@@ -23,7 +23,10 @@ class PiFeed : AppCompatActivity() {
         1 to "http://$feed1IP/html/cam_pic_new.php?pDelay=$feedRefreshRate",
         2 to "http://$feed2IP/html/cam_pic_new.php?pDelay=$feedRefreshRate",
         3 to "http://$feed3IP/html/cam_pic_new.php?pDelay=$feedRefreshRate",
-        4 to "http://$feed4IP/html/cam_pic_new.php?pDelay=$feedRefreshRate"
+        4 to "http://$feed4IP/html/cam_pic_new.php?pDelay=$feedRefreshRate",
+        5 to "http://$feed5IP/html/cam_pic_new.php?pDelay=$feedRefreshRate",
+        6 to "http://$feed6IP/html/cam_pic_new.php?pDelay=$feedRefreshRate"
+
     )
 
     private lateinit var mDetector: GestureDetectorCompat
@@ -133,13 +136,13 @@ class PiFeed : AppCompatActivity() {
         ): Boolean {
             Log.d("Gesture: ", "onFling: $event1 $event2")
             when {
-                event1.x < event2.x -> when (feedChoice) {
-                    1 -> feedChoice = 4
-                    else -> feedChoice--
+                event1.x < event2.x -> feedChoice = when (feedChoice) {
+                    feedSelection.first() -> feedSelection.last()
+                    else -> feedSelection[feedSelection.indexOf(feedChoice) - 1]
                 }
-                event1.x > event2.x -> when (feedChoice) {
-                    4 -> feedChoice = 1
-                    else -> feedChoice++
+                event1.x > event2.x -> feedChoice = when (feedChoice) {
+                    feedSelection.last() -> feedSelection.first()
+                    else -> feedSelection[feedSelection.indexOf(feedChoice) + 1]
                 }
             }
             return true
