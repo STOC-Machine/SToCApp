@@ -35,7 +35,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Log.d("Settings Startup", "Set preferences successfully")
 
         val preferenceListener = Preference.OnPreferenceChangeListener { preference, value ->
-            if (preference === feedSelectPref) Log.d("Feed select", (value as HashSet<*>).toString())
             val stringValue =
                 if (preference === feedSelectPref) (value as HashSet<*>).toList().sortedBy { it.toString() }
                     .toString().removePrefix("[").removeSuffix("]") else value as String
@@ -70,8 +69,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     feedRefreshRate = stringValue.toInt()
                     preferencesEditor.putInt(FEED_REFRESH_KEY, stringValue.toInt()).apply()
                 }
-                feedSelectPref -> {     // TODO: Fix issue where preferences save last update instead of latest update
-                    preferencesEditor.putStringSet(FEED_SELECT_KEY, (feedSelectPref.values)).apply()
+                feedSelectPref -> {
+                    preferencesEditor.putStringSet(
+                        FEED_SELECT_KEY,
+                        mutableSetOf<String>().apply {
+                            (value as HashSet<*>).forEach {
+                                this.add(it as String)
+                            }
+                        }
+                    ).apply()
                     feedSelection.clear()
                     if (stringValue != "[]" && stringValue != "") {
                         for (v in stringValue.split(',')) feedSelection.add(
