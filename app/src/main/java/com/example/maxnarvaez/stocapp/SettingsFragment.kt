@@ -2,15 +2,15 @@ package com.example.maxnarvaez.stocapp
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.support.v14.preference.MultiSelectListPreference
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.Preference
 import android.util.Log
+import androidx.preference.ListPreference
+import androidx.preference.MultiSelectListPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import com.takisoft.fix.support.v7.preference.EditTextPreference
-import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 
 class SettingsFragment : PreferenceFragmentCompat() {
-    override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.pref_general, rootKey)
         Log.d("Settings Startup", "Loaded preferences successfully")
         val feed1Preference = findPreference("feed_ip_1") as EditTextPreference
