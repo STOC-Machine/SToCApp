@@ -32,7 +32,7 @@ class FeedSelect : Fragment() {
             val intent = Intent(this.context, PiFeed::class.java)
             startActivity(intent)
         } else {
-            Toast.makeText(this.context, "No feeds selected", Toast.LENGTH_LONG).show()
+            Toast.makeText(this.context, "No feeds selected", Toast.LENGTH_SHORT).show()
         }
     }
 

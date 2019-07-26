@@ -26,7 +26,6 @@ class PiFeed : AppCompatActivity() {
         4 to "http://$feed4IP/html/cam_pic_new.php?pDelay=$feedRefreshRate",
         5 to "http://$feed5IP/html/cam_pic_new.php?pDelay=$feedRefreshRate",
         6 to "http://$feed6IP/html/cam_pic_new.php?pDelay=$feedRefreshRate"
-
     )
 
     private lateinit var mDetector: GestureDetectorCompat
@@ -57,18 +56,19 @@ class PiFeed : AppCompatActivity() {
         }
     }
 
+    private val feedVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE or
+            View.SYSTEM_UI_FLAG_FULLSCREEN or
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pi_feed)
         mDetector = GestureDetectorCompat(this, MyGestureListener())
         startFeed()
-        videoFeedView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LOW_PROFILE or
-                View.SYSTEM_UI_FLAG_FULLSCREEN or
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        videoFeedView.systemUiVisibility = feedVisibility
 
         supportFragmentManager
             .beginTransaction()
@@ -78,13 +78,7 @@ class PiFeed : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        videoFeedView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LOW_PROFILE or
-                View.SYSTEM_UI_FLAG_FULLSCREEN or
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        videoFeedView.systemUiVisibility = feedVisibility
         GlobalScope.launch { videoFeedView.Start(feeds[feedChoice]) }
     }
 

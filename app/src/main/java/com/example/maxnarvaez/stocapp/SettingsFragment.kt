@@ -3,11 +3,7 @@ package com.example.maxnarvaez.stocapp
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import androidx.preference.ListPreference
-import androidx.preference.MultiSelectListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import com.takisoft.fix.support.v7.preference.EditTextPreference
+import androidx.preference.*
 
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -21,6 +17,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val feed6Preference = findPreference("feed_ip_6") as EditTextPreference
         val feedRefreshPref = findPreference("feed_refresh") as ListPreference
         val feedSelectPref = findPreference("feed_select") as MultiSelectListPreference
+
+        val preferences = listOf(
+            feed1Preference,
+            feed2Preference,
+            feed3Preference,
+            feed4Preference,
+            feed5Preference,
+            feed6Preference,
+            feedRefreshPref,
+            feedSelectPref
+        )
+
         Log.d("Feed Select", feedSelectPref.values.toString())
         Log.d("Settings Startup", "Found preferences successfully")
 
@@ -107,14 +115,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         feedSelectPref.summary = (feedSelectPref.values).toList().sortedBy { it.toString() }
             .toString().removePrefix("[").removeSuffix("]")
         Log.d("Settings Setup", "Set summaries successfully")
-        feed1Preference.onPreferenceChangeListener = preferenceListener
-        feed2Preference.onPreferenceChangeListener = preferenceListener
-        feed3Preference.onPreferenceChangeListener = preferenceListener
-        feed4Preference.onPreferenceChangeListener = preferenceListener
-        feed5Preference.onPreferenceChangeListener = preferenceListener
-        feed6Preference.onPreferenceChangeListener = preferenceListener
-        feedRefreshPref.onPreferenceChangeListener = preferenceListener
-        feedSelectPref.onPreferenceChangeListener = preferenceListener
 
+        preferences.forEach {
+            it.onPreferenceChangeListener = preferenceListener
+        }
     }
 }
