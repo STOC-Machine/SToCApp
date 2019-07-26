@@ -14,3 +14,6 @@ const val FEED_IP_3_KEY = "feed_ip_3"
 const val FEED_IP_4_KEY = "feed_ip_4"
 const val FEED_REFRESH_KEY = "feed_refresh"
 lateinit var mPreferences: SharedPreferences
+
+var host = "10.42.235.221"
+var port = 12459
