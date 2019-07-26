@@ -16,25 +16,25 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import java.io.*
 import java.net.Socket
-import java.nio.charset.Charset
+import kotlin.system.exitProcess
 
 class Message {
 
     // class variables
 
     /** a single character that indicates the end of each part of a Message when it is expressed as an array of byte  */
-    protected val TERMINATOR = ","
+    private val terminator = ","
 
     /** the buffer size for input  */
-    protected val MAXBUFF = 10000
+    private val maxBuff = 10000
 
     // state variables
 
     /** the type of the message  */
-    internal var type:String
+    var type: String
 
     /** content of the message  */
-    internal var content:String
+    var content: String
 
     // methods
 
@@ -43,12 +43,8 @@ class Message {
      * @exception UnsupportedEncodingException
      * Thrown if there is an error in encoding
      */
-    val bytes:ByteArray
-        @Throws(UnsupportedEncodingException::class)
-        get() {
-            val str = "$type,$content"
-            return str.toByteArray()
-        }
+    val bytes: ByteArray
+        get() = "$type,$content".toByteArray()
 
     // constructors
 
@@ -56,33 +52,30 @@ class Message {
      * @param str1 The type of the message
      * @param str2 The content of the message
      */
-    internal constructor(str1:String, str2:String) {
+    internal constructor(str1: String, str2: String) {
         type = str1
         content = str2
     }
 
-    /** Attempts to read a Message represented as an array of byte initialize the two state variables from that array, using the delimiter TERMINATOR to determine where the two values end
+    /** Attempts to read a Message represented as an array of byte initialize the two state variables from that array, using the delimiter terminator to determine where the two values end
      * @param is InputStream which is associated with a socket
      * @exception EOFException
      * Thrown when encounter end of stream
-     * @exception IOExcetion
+     * @exception IOException
      * Thrown when encounter other
      */
-    @Throws(EOFException::class, IOException::class)
     internal constructor(`is`: InputStream) {
-        val inBuff = ByteArray(MAXBUFF)
-        var count = 0  // to hold number of bytes read
-        try
-        {
+        val inBuff = ByteArray(maxBuff)
+        var count: Int  // to hold number of bytes read
+        try {
             count = `is`.read(inBuff)
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             println(e.message)
-            System.exit(0)
+            exitProcess(0)
         }
 
         val s = String(inBuff)
-        val str = s.split(TERMINATOR.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val str = s.split(terminator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         type = str[0]
         content = str[1]
         println(
@@ -97,35 +90,30 @@ class Message {
     /** Produce a readable representation of this Message
      * @return a String representing a printable version of the Message
      */
-    override fun toString():String {
+    override fun toString(): String {
         return "[type = $type, content = $content]"
     }
 
     /** Transmit this message on a stream, such as a socket output stream
-     * @param Stream on which to transmit the message, in UTF-8 encoding
+     * @param str Stream on which to transmit the message, in UTF-8 encoding
      * @exception IOException
      * Throw if there is a problem with `str.write()`
      */
-    @Throws(IOException::class)
     fun send(str: OutputStream) {
-        val b = ("$type,$content").toByteArray()
-        str.write(b)
+        str.write("$type,$content".toByteArray())
     }
 
     companion object {
 
         /** Test for this class.
-         * @param input from terminal
+         * @param args input from terminal
          */
-        @JvmStatic  fun main(args:Array<String>) {
+        @JvmStatic
+        fun main(args: Array<String>) {
 
         }
     }
 }
-
-
-
-
 
 
 class OpenSocketTask() : AsyncTask<String, Void, Void>() {
@@ -139,11 +127,11 @@ class OpenSocketTask() : AsyncTask<String, Void, Void>() {
 
     override fun doInBackground(vararg mess: String?): Void? {
         // private val reader: Scanner = Scanner(client.getInputStream())
-        client = Socket("10.44.155.152", 12459)
+        client = Socket("10.42.235.221", 12459)
 
         val writer: OutputStream = client.getOutputStream()
 
-        System.out.println(mess.javaClass.kotlin)
+        println(mess.javaClass.kotlin)
 
         val m = Message("EOT", mess[0].toString())
         m.send(writer)
@@ -161,15 +149,16 @@ class OpenSocketTask() : AsyncTask<String, Void, Void>() {
 
 
 class SpeechFragment : Fragment(), RecognitionListener {
-    private var sr: SpeechRecognizer? = null
+    lateinit var sr: SpeechRecognizer
     lateinit var speechText: TextView
     lateinit var speechButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sr = SpeechRecognizer.createSpeechRecognizer(this.context)
-        sr!!.setRecognitionListener(this)//this activity is the listener
+        sr = SpeechRecognizer.createSpeechRecognizer(this.context).apply {
+            setRecognitionListener(this@SpeechFragment) //this activity is the listener
+        }
 
     }
 
@@ -258,7 +247,7 @@ class SpeechFragment : Fragment(), RecognitionListener {
 //        val word = data.get(data.size() - 1) as String
 //        recognisedText.setText(word)
 //        val client = Socket("10.42.235.221", 12459)
-        OpenSocketTask().execute(result.get(0))
+        OpenSocketTask().execute(result[0])
 
     }
 
@@ -281,7 +270,10 @@ class SpeechFragment : Fragment(), RecognitionListener {
     private fun startListening() {
         speechButton.backgroundTintList = ColorStateList.valueOf(Color.RED)
         val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        sr!!.startListening(speechIntent)
+        speechIntent.putExtra(
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        )
+        sr.startListening(speechIntent)
     }
 }
