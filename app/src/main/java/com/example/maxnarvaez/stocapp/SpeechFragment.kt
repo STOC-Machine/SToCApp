@@ -8,12 +8,12 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import java.io.*
 import java.net.Socket
 import java.nio.charset.Charset
@@ -195,7 +195,6 @@ class SpeechFragment : Fragment(), RecognitionListener {
 
     //App is ready for the user to speak
     override fun onReadyForSpeech(params: Bundle) {
-        println("Ready for speech")
         speechButton.backgroundTintList = ColorStateList.valueOf(Color.GREEN)
     }
 
@@ -217,6 +216,7 @@ class SpeechFragment : Fragment(), RecognitionListener {
     //it's been a while since they talked, they're done
     override fun onEndOfSpeech() {
         speechButton.backgroundTintList = ColorStateList.valueOf(Color.GRAY)
+
     }
 
     //something went wrong
@@ -238,7 +238,6 @@ class SpeechFragment : Fragment(), RecognitionListener {
 
         println("ERROR $error")
         speechText.text = errorString
-        println(errorString)
         //sr!!.stopListening()
         //not sure if this is how you're supposed to do it, but it works!
         onBeginningOfSpeech()
