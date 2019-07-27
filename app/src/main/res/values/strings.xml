@@ -18,7 +18,7 @@
     <string name="speech_text">Go on, click the button.</string>
     <string name="feed_refresh_rate">Feed Refresh Rate</string>
     <string name="setting_feed_select">Feed Selection</string>
-    <string name="send_button">Send</string>
+    <string name="reset_button">Emergency Reset</string>
     <string name="setting_parser">Parser IP</string>
 
 </resources>

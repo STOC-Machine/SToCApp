@@ -40,9 +40,17 @@ class SpeechFragment : Fragment(), RecognitionListener {
         speechButton.setOnClickListener {
             startListening()
         }
-        sendButton = thisView.findViewById(R.id.sendButton) as Button
+        sendButton = thisView.findViewById(R.id.emergencyReset) as Button
         sendButton.setOnClickListener {
-            sendMessage()
+            sr.stopListening()
+            sr.destroy()
+            sr.setRecognitionListener(this)
+            val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            speechIntent.putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
+            sr.startListening(speechIntent)
         }
 
         speechButton.backgroundTintList = ColorStateList.valueOf(Color.GRAY)
@@ -93,11 +101,18 @@ class SpeechFragment : Fragment(), RecognitionListener {
             }
         }
 
-        Log.e("Speech", "ERROR $error")
         speechText.text = errorString
+        Log.e("Speech", "ERROR $error")
         //not sure if this is how you're supposed to do it, but it works!
         onBeginningOfSpeech()
         onEndOfSpeech()
+        if (error==6) Thread.sleep(100)
+        val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        speechIntent.putExtra(
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        )
+        sr.startListening(speechIntent)
     }
 
     //speech has been processed, here are the results
@@ -107,9 +122,20 @@ class SpeechFragment : Fragment(), RecognitionListener {
                 this.add(it as String)
             }
         }
-        speechText.text = result[0]//Main one, the one it's most confident about...
+        val resultList = if (result.size >= 2) listOf(result[0], result[1]) else listOf(result[0])
+        speechText.text = resultList.toString() //Main one, the one it's most confident about...
         Log.d("Speech", "Possible results: $result")
         sendButton.backgroundTintList = ColorStateList.valueOf(Color.GREEN)
+        var send = false
+        result.forEach {
+            if (it.contains("send", true) || it.contains("done", false)) sendMessage()
+        }
+        val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        speechIntent.putExtra(
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        )
+        sr.startListening(speechIntent)
 //        val data = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
 //        val word = data.get(data.size() - 1) as String
 //        recognisedText.setText(word)
@@ -117,20 +143,14 @@ class SpeechFragment : Fragment(), RecognitionListener {
     }
 
     //partial results? I never ran into these but maybe if it was interrupted?
-    override fun onPartialResults(partialResults: Bundle) {
-        val result = mutableListOf<String>().apply {
-            (partialResults.get(SpeechRecognizer.RESULTS_RECOGNITION) as List<*>).forEach {
-                this.add(it as String)
-            }
-        } //copy pasted from above
-        Log.d("Speech", "partial results: $result")
-    }
+    override fun onPartialResults(partialResults: Bundle) {}
 
     //vague event I guess?
     override fun onEvent(eventType: Int, params: Bundle) {}
 
     private fun startListening() {
         speechButton.backgroundTintList = ColorStateList.valueOf(Color.RED)
+        speechButton.setOnClickListener { }
         val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         speechIntent.putExtra(
             RecognizerIntent.EXTRA_LANGUAGE_MODEL,

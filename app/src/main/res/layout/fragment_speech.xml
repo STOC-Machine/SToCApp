@@ -31,13 +31,12 @@
             app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-            android:id="@+id/sendButton"
+            android:id="@+id/emergencyReset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/send_button"
+            android:text="@string/reset_button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/speechText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
