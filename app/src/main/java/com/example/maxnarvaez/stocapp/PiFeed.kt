@@ -130,11 +130,11 @@ class PiFeed : AppCompatActivity() {
         ): Boolean {
             Log.d("Gesture: ", "onFling: $event1 $event2")
             when {
-                event1.x < event2.x -> feedChoice = when (feedChoice) {
+                event1.x < event2.x + 200.0 -> feedChoice = when (feedChoice) {
                     feedSelection.first() -> feedSelection.last()
                     else -> feedSelection[feedSelection.indexOf(feedChoice) - 1]
                 }
-                event1.x > event2.x -> feedChoice = when (feedChoice) {
+                event1.x + 200.0 > event2.x -> feedChoice = when (feedChoice) {
                     feedSelection.last() -> feedSelection.first()
                     else -> feedSelection[feedSelection.indexOf(feedChoice) + 1]
                 }

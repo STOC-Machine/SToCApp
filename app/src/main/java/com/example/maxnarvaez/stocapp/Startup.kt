@@ -48,6 +48,8 @@ class Startup : AppCompatActivity() {
             feedSelection.sort()
         }
 
+        parserIP = mPreferences.getString(PARSER_IP_KEY, parserIP) ?: parserIP
+
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.RECORD_AUDIO

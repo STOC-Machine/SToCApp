@@ -9,14 +9,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.pref_general, rootKey)
         Log.d("Settings Startup", "Loaded preferences successfully")
-        val feed1Preference = findPreference("feed_ip_1") as EditTextPreference
-        val feed2Preference = findPreference("feed_ip_2") as EditTextPreference
-        val feed3Preference = findPreference("feed_ip_3") as EditTextPreference
-        val feed4Preference = findPreference("feed_ip_4") as EditTextPreference
-        val feed5Preference = findPreference("feed_ip_5") as EditTextPreference
-        val feed6Preference = findPreference("feed_ip_6") as EditTextPreference
-        val feedRefreshPref = findPreference("feed_refresh") as ListPreference
-        val feedSelectPref = findPreference("feed_select") as MultiSelectListPreference
+        val feed1Preference = findPreference(FEED_IP_1_KEY) as EditTextPreference
+        val feed2Preference = findPreference(FEED_IP_2_KEY) as EditTextPreference
+        val feed3Preference = findPreference(FEED_IP_3_KEY) as EditTextPreference
+        val feed4Preference = findPreference(FEED_IP_4_KEY) as EditTextPreference
+        val feed5Preference = findPreference(FEED_IP_5_KEY) as EditTextPreference
+        val feed6Preference = findPreference(FEED_IP_6_KEY) as EditTextPreference
+        val feedRefreshPref = findPreference(FEED_REFRESH_KEY) as ListPreference
+        val feedSelectPref = findPreference(FEED_SELECT_KEY) as MultiSelectListPreference
+        val parserPreference = findPreference(PARSER_IP_KEY) as EditTextPreference
+
 
         val preferences = listOf(
             feed1Preference,
@@ -25,6 +27,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             feed4Preference,
             feed5Preference,
             feed6Preference,
+            parserPreference,
             feedRefreshPref,
             feedSelectPref
         )
@@ -38,6 +41,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         feed4Preference.text = feed4IP
         feed5Preference.text = feed5IP
         feed6Preference.text = feed6IP
+        parserPreference.text = parserIP
         feedRefreshPref.value = feedRefreshRate.toString()
 
         Log.d("Settings Startup", "Set preferences successfully")
@@ -96,6 +100,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         feedSelection.sort()
                     }
                 }
+                parserPreference -> {
+                    parserIP = stringValue
+                    preferencesEditor.putString(PARSER_IP_KEY, stringValue).apply()
+                }
             }
             Log.d(
                 "PrefListener",
@@ -114,6 +122,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         feedRefreshPref.summary = feedRefreshPref.value.toString()
         feedSelectPref.summary = (feedSelectPref.values).toList().sortedBy { it.toString() }
             .toString().removePrefix("[").removeSuffix("]")
+        parserPreference.summary = parserPreference.text
         Log.d("Settings Setup", "Set summaries successfully")
 
         preferences.forEach {
