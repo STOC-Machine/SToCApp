@@ -38,7 +38,10 @@ object ParserConnection {
             return
         }
         withContext(Dispatchers.IO) {
-            Message("EOT", message).send(oStream)
+            try {
+                Message("EOT", message).send(oStream)
+            } catch (e: Exception) {
+            }
         }
     }
 
