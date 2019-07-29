@@ -10,7 +10,7 @@ import java.net.Socket
 
 object ParserConnection {
 
-    private lateinit var socket: Socket
+    private var socket = Socket()
     private lateinit var oStream: OutputStream
     private var connected = false
     val isConnected: Boolean

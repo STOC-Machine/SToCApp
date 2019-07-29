@@ -15,18 +15,23 @@
     <string name="setting_feed_6">Feed 6 IP</string>
 
     <string name="speech_button">Start Listening</string>
-    <string name="speech_text">Go on, click the button.</string>
+    <string name="speech_text_1">Go on, click the button already.</string>
+    <string name="speech_text_2">What are you waiting for?</string>
+    <string name="speech_text_3">I\'m waiting…</string>
+    <string name="speech_text_4">What\'s taking so long?</string>
+    <string name="speech_text_5">I\'m getting bored.</string>
+    <string name="speech_text_6">Can you hurry up please?</string>
     <string name="feed_refresh_rate">Feed Refresh Rate</string>
     <string name="setting_feed_select">Feed Selection</string>
     <string name="reset_button">Stop Listening</string>
     <string name="setting_parser">Parser IP</string>
-    <string name="no_message">No Message</string>
     <string name="waiting_status">WAITING</string>
     <string name="listening_status">LISTENING</string>
     <string name="processing_status">PROCESSING</string>
     <string name="send_triggers_pref">Send Triggers</string>
-    <string name="sending_status">Sending</string>
+    <string name="sent_status">Sent</string>
     <string name="no_trigger_status">No Triggers</string>
     <string name="no_message_status">No Message</string>
+    <string name="send_message_status">Send Message?</string>
 
 </resources>
