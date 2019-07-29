@@ -48,4 +48,9 @@
             android:entryValues="@array/feed_selection"
             android:key="feed_select"
             android:title="@string/setting_feed_select" />
+    <MultiSelectListPreference
+        android:entries="@array/send_triggers"
+        android:entryValues="@array/send_triggers"
+        android:key="send_trigs"
+        android:title="@string/send_triggers_pref" />
 </PreferenceScreen>

@@ -36,6 +36,7 @@ class Startup : AppCompatActivity() {
         feed6IP = mPreferences.getString(FEED_IP_6_KEY, feed6IP) ?: feed6IP
         feedRefreshRate = mPreferences.getInt(FEED_REFRESH_KEY, feedRefreshRate)
         val feedSelectPrefs = mPreferences.getStringSet(FEED_SELECT_KEY, null)?.toString() ?: ""
+        val sendTriggerPrefs = mPreferences.getStringSet(SEND_TRIG_KEY, null)?.toString() ?: ""
         feedSelection.clear()
         if (feedSelectPrefs != "[]" && feedSelectPrefs != "") {
             for (v in feedSelectPrefs.split(',')) feedSelection.add(
@@ -48,6 +49,14 @@ class Startup : AppCompatActivity() {
             feedSelection.sort()
         }
 
+        if (sendTriggerPrefs != "[]" && sendTriggerPrefs != "") {
+            for (v in sendTriggerPrefs.split(',')) sendTriggers.add(
+                v.removePrefix("[")
+                    .removeSuffix("]")
+                    .removePrefix(" ")
+            )
+            sendTriggers.sort()
+        }
         parserIP = mPreferences.getString(PARSER_IP_KEY, parserIP) ?: parserIP
 
         if (ContextCompat.checkSelfPermission(

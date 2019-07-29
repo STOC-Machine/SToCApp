@@ -8,19 +8,30 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.fragment_speech.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class SpeechFragment : Fragment(), RecognitionListener {
     private lateinit var sr: SpeechRecognizer
     private lateinit var speechText: TextView
     private lateinit var speechButton: Button
-    private lateinit var sendButton: Button
+    private lateinit var stopSpeechButton: Button
+    private lateinit var status: TextView
+    private lateinit var buttonStatusContainer: FrameLayout
+    private lateinit var sentStatusText: TextView
+    private var stopListening = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,25 +48,37 @@ class SpeechFragment : Fragment(), RecognitionListener {
         val thisView = inflater.inflate(R.layout.fragment_speech, container, false)
         speechText = thisView.findViewById(R.id.speechText) as TextView
         speechButton = thisView.findViewById(R.id.speechButton) as Button
+        stopSpeechButton = thisView.findViewById(R.id.stopButton) as Button
+        buttonStatusContainer = thisView.findViewById(R.id.button_status_container) as FrameLayout
+        sentStatusText = thisView.findViewById(R.id.sent_status) as TextView
         speechButton.setOnClickListener {
-            startListening()
+            if (sendTriggers.isNotEmpty()) {
+                val ret = startListening()
+                if (ret == 1)
+                    Toast.makeText(this.context, "Could not connect to parser", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                Toast.makeText(this.context, "No send triggers selected", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
-        sendButton = thisView.findViewById(R.id.emergencyReset) as Button
-        sendButton.setOnClickListener {
-            sr.stopListening()
-            sr.destroy()
-            sr.setRecognitionListener(this)
-            val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-            speechIntent.putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-            )
-            sr.startListening(speechIntent)
+        stopSpeechButton.setOnClickListener {
+//            sr.stopListening()
+//            sr.destroy()
+//            sr.setRecognitionListener(this)
+//            val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+//            speechIntent.putExtra(
+//                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+//                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+//            )
+//            sr.startListening(speechIntent)
+            stopListening()
         }
 
         speechButton.backgroundTintList = ColorStateList.valueOf(Color.GRAY)
-        sendButton.backgroundTintList = ColorStateList.valueOf(Color.RED)
+        stopSpeechButton.backgroundTintList = ColorStateList.valueOf(Color.RED)
         speechText.setBackgroundColor(0xfffafafa.toInt())
+        sentStatusText.setBackgroundColor(0xfffafafa.toInt())
 
         // Inflate the layout for this fragment
         return thisView
@@ -64,13 +87,14 @@ class SpeechFragment : Fragment(), RecognitionListener {
 
     //App is ready for the user to speak
     override fun onReadyForSpeech(params: Bundle) {
-        speechButton.backgroundTintList = ColorStateList.valueOf(Color.GREEN)
-        sendButton.backgroundTintList = ColorStateList.valueOf(Color.RED)
+        status.setBackgroundColor(Color.GREEN)
+        status.text = getString(R.string.waiting_status)
     }
 
     //user has begun to speak
     override fun onBeginningOfSpeech() {
-        speechButton.backgroundTintList = ColorStateList.valueOf(Color.CYAN)
+        status.setBackgroundColor(Color.CYAN)
+        status.text = getString(R.string.listening_status)
     }
 
     //change in volume (I believe, haven't read much on this)
@@ -81,7 +105,8 @@ class SpeechFragment : Fragment(), RecognitionListener {
 
     //it's been a while since they talked, they're done
     override fun onEndOfSpeech() {
-        speechButton.backgroundTintList = ColorStateList.valueOf(Color.GRAY)
+        status.setBackgroundColor(Color.GRAY)
+        status.text = getString(R.string.processing_status)
     }
 
     //something went wrong
@@ -102,17 +127,18 @@ class SpeechFragment : Fragment(), RecognitionListener {
         }
 
         speechText.text = errorString
+        sentStatusText.text = getString(R.string.no_message_status)
         Log.e("Speech", "ERROR $error")
         //not sure if this is how you're supposed to do it, but it works!
         onBeginningOfSpeech()
         onEndOfSpeech()
-        if (error==6) Thread.sleep(100)
+        if (error == 6) Thread.sleep(100)
         val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         speechIntent.putExtra(
             RecognizerIntent.EXTRA_LANGUAGE_MODEL,
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
         )
-        sr.startListening(speechIntent)
+        if (!stopListening) sr.startListening(speechIntent)
     }
 
     //speech has been processed, here are the results
@@ -125,17 +151,24 @@ class SpeechFragment : Fragment(), RecognitionListener {
         val resultList = if (result.size >= 2) listOf(result[0], result[1]) else listOf(result[0])
         speechText.text = resultList.toString() //Main one, the one it's most confident about...
         Log.d("Speech", "Possible results: $result")
-        sendButton.backgroundTintList = ColorStateList.valueOf(Color.GREEN)
-        var send = false
-        result.forEach {
-            if (it.contains("send", true) || it.contains("done", false)) sendMessage()
+        var sent = false
+        message@for (m in result) {
+            for (t in sendTriggers) {
+                if (m.contains(t, true)) {
+                    sent = true
+                    sentStatusText.text = getString(R.string.sending_status)
+                    sendMessage()
+                    break@message
+                }
+            }
         }
+        if (!sent) sentStatusText.text = getString(R.string.no_trigger_status)
         val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         speechIntent.putExtra(
             RecognizerIntent.EXTRA_LANGUAGE_MODEL,
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
         )
-        sr.startListening(speechIntent)
+        if (!stopListening) sr.startListening(speechIntent)
 //        val data = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
 //        val word = data.get(data.size() - 1) as String
 //        recognisedText.setText(word)
@@ -148,19 +181,43 @@ class SpeechFragment : Fragment(), RecognitionListener {
     //vague event I guess?
     override fun onEvent(eventType: Int, params: Bundle) {}
 
-    private fun startListening() {
-        speechButton.backgroundTintList = ColorStateList.valueOf(Color.RED)
-        speechButton.setOnClickListener { }
+    private fun startListening(): Int {
+        stopListening = false
+        val connected = runBlocking {
+            return@runBlocking ParserConnection.connect()
+        }
+        if (!connected) return 1
+        status = TextView(speechButton.context)
+        buttonStatusContainer.removeView(speechButton)
+        buttonStatusContainer.addView(status)
+        status.text = getString(R.string.waiting_status)
+        status.gravity = Gravity.CENTER_HORIZONTAL
+        status.textSize = 30.0F
+        status.setBackgroundColor(Color.GREEN)
+        stopButton.visibility = View.VISIBLE
+
         val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         speechIntent.putExtra(
             RecognizerIntent.EXTRA_LANGUAGE_MODEL,
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
         )
         sr.startListening(speechIntent)
+        return 0
+    }
+
+    private fun stopListening() {
+        stopListening = true
+        sr.stopListening()
+        runBlocking { ParserConnection.disconnect() }
+        buttonStatusContainer.removeView(status)
+        buttonStatusContainer.addView(speechButton)
+        stopButton.visibility = View.INVISIBLE
     }
 
     private fun sendMessage() {
         Log.d("Speech", "Sending ${speechText.text}")
-        OpenSocketTask().execute(speechText.text.toString())
+        GlobalScope.launch {
+            ParserConnection.send(speechText.text.toString())
+        }
     }
 }

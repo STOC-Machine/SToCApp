@@ -22,4 +22,10 @@
         <item>5</item>
         <item>6</item>
     </integer-array>
+    <string-array name="send_triggers">
+        <item>Done</item>
+        <item>Engage</item>
+        <item>Make it so</item>
+        <item>Send</item>
+    </string-array>
 </resources>

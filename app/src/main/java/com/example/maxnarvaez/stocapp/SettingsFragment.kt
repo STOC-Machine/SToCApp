@@ -18,6 +18,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val feedRefreshPref = findPreference(FEED_REFRESH_KEY) as ListPreference
         val feedSelectPref = findPreference(FEED_SELECT_KEY) as MultiSelectListPreference
         val parserPreference = findPreference(PARSER_IP_KEY) as EditTextPreference
+        val sendTriggerPref = findPreference(SEND_TRIG_KEY) as MultiSelectListPreference
 
 
         val preferences = listOf(
@@ -29,7 +30,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             feed6Preference,
             parserPreference,
             feedRefreshPref,
-            feedSelectPref
+            feedSelectPref,
+            sendTriggerPref
         )
 
         Log.d("Feed Select", feedSelectPref.values.toString())
@@ -48,8 +50,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val preferenceListener = Preference.OnPreferenceChangeListener { preference, value ->
             val stringValue =
-                if (preference === feedSelectPref) (value as HashSet<*>).toList().sortedBy { it.toString() }
-                    .toString().removePrefix("[").removeSuffix("]") else value as String
+                if (preference === feedSelectPref || preference === sendTriggerPref)
+                    (value as HashSet<*>).toList().sortedBy { it.toString() }
+                        .toString().removePrefix("[").removeSuffix("]")
+                else value as String
             preference.summary = stringValue
             val preferencesEditor: SharedPreferences.Editor = mPreferences.edit()
             when (preference) {
@@ -104,6 +108,23 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     parserIP = stringValue
                     preferencesEditor.putString(PARSER_IP_KEY, stringValue).apply()
                 }
+                sendTriggerPref -> {
+                    preferencesEditor.putStringSet(
+                        SEND_TRIG_KEY,
+                        mutableSetOf<String>().apply {
+                            (value as HashSet<*>).forEach {
+                                this.add(it as String)
+                            }
+                        }
+                    ).apply()
+                    sendTriggers.clear()
+                    if (stringValue != "[]" && stringValue != "") {
+                        for (v in stringValue.split(',')) sendTriggers.add(
+                            v.removePrefix(" ")
+                        )
+                        sendTriggers.sort()
+                    }
+                }
             }
             Log.d(
                 "PrefListener",
@@ -121,6 +142,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         feed6Preference.summary = feed6Preference.text
         feedRefreshPref.summary = feedRefreshPref.value.toString()
         feedSelectPref.summary = (feedSelectPref.values).toList().sortedBy { it.toString() }
+            .toString().removePrefix("[").removeSuffix("]")
+        sendTriggerPref.summary = (sendTriggerPref.values).toList().sortedBy { it.toString() }
             .toString().removePrefix("[").removeSuffix("]")
         parserPreference.summary = parserPreference.text
         Log.d("Settings Setup", "Set summaries successfully")
