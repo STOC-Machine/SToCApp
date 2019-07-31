@@ -27,3 +27,4 @@ const val SEND_TRIG_KEY = "send_trigs"
 lateinit var mPreferences: SharedPreferences
 
 var host = "10.42.235.221"
+var local_port = 13098

@@ -33,6 +33,11 @@ class SpeechFragment : Fragment(), RecognitionListener {
     private lateinit var sentStatusText: TextView
     private var stopListening = false
     private lateinit var speechTexts: List<String>
+    private lateinit var qrResult: TextView
+
+//    private var receiving = runBlocking {
+//        return@runBlocking ParserConnection.open_socket()
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +57,8 @@ class SpeechFragment : Fragment(), RecognitionListener {
         stopSpeechButton = thisView.findViewById(R.id.stopButton) as Button
         buttonStatusContainer = thisView.findViewById(R.id.button_status_container) as FrameLayout
         sentStatusText = thisView.findViewById(R.id.sent_status) as TextView
+        qrResult = thisView.findViewById(R.id.qrResult) as TextView
+
         speechButton.setOnClickListener {
             if (sendTriggers.isNotEmpty()) {
                 val ret = startListening()
@@ -189,8 +196,11 @@ class SpeechFragment : Fragment(), RecognitionListener {
     private fun startListening(): Int {
         stopListening = false
         val connected = runBlocking {
-            return@runBlocking ParserConnection.connect()
+            return@runBlocking ParserConnection.connect(qrResult)
         }
+//        val receiving = runBlocking {
+//            return@runBlocking ParserConnection.open_socket()
+//        }
         if (!connected) return 1
         status = TextView(speechButton.context)
         buttonStatusContainer.removeView(speechButton)
@@ -229,6 +239,8 @@ class SpeechFragment : Fragment(), RecognitionListener {
         Log.d("Speech", "Sending ${speechText.text}")
         GlobalScope.launch {
             ParserConnection.send(speechText.text.toString())
+//            ParserConnection.receive_message()
+            Log.d("Speech", "Try to receive message")
         }
     }
 

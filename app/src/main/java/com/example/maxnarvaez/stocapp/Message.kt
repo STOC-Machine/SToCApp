@@ -50,20 +50,18 @@ class Message {
         try {
             val inBuff = ByteArray(maxBuff)
             val count = iStream.read(inBuff)
-
+            print(inBuff)
 
             val s = String(inBuff)
             val str = s.split(terminator.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val tmp = str[1].split(" ").dropLastWhile { it.isEmpty() }.toTypedArray()
+            content = tmp[0]
             type = str[0]
-            content = str[1]
             Log.d(
                 "Parser Comms",
-                "Successfully received the following " + count
-                        + " bytes:" + content
+                "Successfully received the following " + content
             )
-//        val tmp = this.toString()
-            // System.out.write(tmp.getBytes());
-            // System.out.println();
+
         } catch (e: IOException) {
             Log.e("Parser Comms", e.message ?: "")
             throw e
@@ -74,6 +72,10 @@ class Message {
      * @return a String representing a printable version of the Message
      */
     override fun toString(): String = "[type = $type, content = $content]"
+
+    fun getContent(): String{
+        return content
+    }
 
     /** Transmit this message on a stream, such as a socket output stream
      * @param str Stream on which to transmit the message, in UTF-8 encoding
